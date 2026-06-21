@@ -47,17 +47,26 @@ if (
 const server = http.createServer(app);
 
 // ─── Socket.IO Setup ──────────────────────────────────────────────
-// Same origin-allowlist logic as app.js: never pair credentials:true
-// with a literal '*', since browsers reject that combination.
 const socketAllowedOrigins = (process.env.FRONTEND_URL || '')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
 
+const getSocketOrigin = () => {
+  if (socketAllowedOrigins.length > 0) {
+    return socketAllowedOrigins;
+  }
+  if (process.env.NODE_ENV === 'production') {
+    return "*"; 
+  }
+  return true;
+};
+
 const io = new Server(server, {
   cors: {
-    origin: socketAllowedOrigins.length > 0 ? socketAllowedOrigins : true,
-    credentials: true
+    origin: getSocketOrigin(),
+    credentials: socketAllowedOrigins.length > 0 ? true : false,
+    methods: ["GET", "POST"]
   }
 });
 

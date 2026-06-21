@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "echo '--- DB PUSH ---' && npx prisma db push --accept-data-loss --skip-generate; echo \"db push exit code: $?\" && echo '--- SEED ---' && node prisma/seed.js; echo \"seed exit code: $?\" && echo '--- STARTING SERVER ---' && node src/server.js",
+    "startCommand": "npm run db:migrate:deploy && node src/server.js",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }

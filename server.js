@@ -6,11 +6,22 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { PrismaClient } = require('@prisma/client');
 
+console.log("1");
 const app = require('./app');
+
+console.log("2");
 const logger = require('./utils/logger');
+
+console.log("3");
 const { setupSocket } = require('./sockets/chatSocket');
+
+console.log("4");
 const notifSvc = require('./services/notificationService');
+
+console.log("5");
 const auditMw = require('./middleware/audit');
+
+console.log("6");
 
 const PORT = process.env.PORT || 3001;
 const prisma = new PrismaClient();

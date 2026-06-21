@@ -23,7 +23,7 @@ const auditMw = require('./middleware/audit');
 
 console.log("6");
 
-const PORT = process.env.PORT || 3001;
+const PORT = Number(process.env.PORT) || 3001;
 const prisma = new PrismaClient();
 
 // ─── Fail fast on missing critical configuration ──────────────────

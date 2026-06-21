@@ -41,6 +41,7 @@ app.use(helmet({
 // CORS WITHOUT credentials only when no FRONTEND_URL is configured
 // (e.g. quick local testing), so misconfiguration fails safely rather
 // than fails open.
+// ─── CORS ─────────────────────────────────────────────────────────
 const allowedOrigins = (process.env.FRONTEND_URL || '')
   .split(',')
   .map((o) => o.trim())
@@ -48,18 +49,25 @@ const allowedOrigins = (process.env.FRONTEND_URL || '')
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (no Origin header: curl, server-to-server, health checks)
+    // 1. Sempre permite requisições sem origem (curl, postman, robô do Railway)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.length === 0) {
-      // No FRONTEND_URL configured — allow any origin but Express won't
-      // send credentials-compatible headers, so cookie auth degrades
-      // gracefully to "logged out" instead of crashing.
-      return callback(null, true);
-    }
+    
+    // 2. Se não houver FRONTEND_URL definida, abre para testes locais
+    if (allowedOrigins.length === 0) return callback(null, true);
+    
+    // 3. Se a origem do navegador estiver na lista autorizada
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    
+    // 4. Em desenvolvimento, não bloqueia o deploy por segurança
+    if (process.env.NODE_ENV !== 'production') return callback(null, true);
+
     logger.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
     return callback(new Error('Não autorizado pela política de CORS.'));
   },
+  credentials: allowedOrigins.length > 0 ? true : false, // Desativa credenciais automáticas se for '*' para não quebrar o browser
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+})); 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']

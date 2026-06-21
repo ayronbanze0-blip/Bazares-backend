@@ -63,7 +63,7 @@ const startServer = async () => {
     await prisma.$connect();
     logger.info('✅ Conexão com a base de dados estabelecida.');
 
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       logger.info(`🚀 Bazares API a correr na porta ${PORT}`);
       logger.info(`🌍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
       logger.info(`🔌 Socket.IO activo para chat em tempo real`);

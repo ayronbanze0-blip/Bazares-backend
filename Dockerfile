@@ -10,4 +10,4 @@ RUN npm install
 
 EXPOSE 3001
 
-CMD ["node", "src/server.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && npm run db:seed && node src/server.js"]
